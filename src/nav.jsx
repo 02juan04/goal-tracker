@@ -1,7 +1,7 @@
 import './nav.css'
 import {Link} from 'react-router-dom';
 
-const navOptions = ["Home", "Profile", "Consistency"];
+const navOptions = ["Home", "Profile", "Archived"];
 
 export default function Nav(){
     return(
