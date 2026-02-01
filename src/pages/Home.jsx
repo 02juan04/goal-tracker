@@ -1,48 +1,23 @@
 import { useState } from "react";
 import '../App.css'
 
-const currentTasks = [
-    {
-        id: 1,
-        taskName : "Take my dog out for a walk",
-        dateCreated : new Date().getDate(),
-        goalDate : new Date().getDate(),
-        completed: false
-    },
-    {
-        id: 2,
-        taskName : "Do My Homework",
-        dateCreated : new Date().getDate(),
-        goalDate : new Date().getDate(),
-        completed: false
-    },
-    {
-        id: 3,
-        taskName : "Finish My Project",
-        dateCreated : new Date().getDate(),
-        goalDate : new Date().getDate(),
-        completed: false
-    },
-    {
-        id: 4,
-        taskName : "Workout",
-        dateCreated : new Date().getDate(),
-        goalDate : new Date().getDate(),
-        completed: false
-    },
-]
-
-const TaskCardHeader = ({task, onCompletion}) => {
-
-
+const TaskCardHeader = ({task}) => {
 
     function handleChecked(){
-        onCompletion(task);
+        task.onCompletion(task.id);
+    }
+
+        function handleRemoveButton(){
+        if(typeof task.onRemove === 'function'){
+            task.onRemove(task.id);
+            return;
+        }
     }
 
     return(
         <>
-            <div id="customCheckbox" className="w-fit h-fit px-2 py-1 rounded-sm hover:bg-[#00FF7F] cursor-pointer text-xs hover:text-black" onClick={handleChecked}>Mark As Complete</div>
+            <div id="customCheckbox" className="w-fit h-fit px-2 py-1 rounded-sm hover:bg-[#45c484] cursor-pointer text-xs hover:text-black" onClick={handleChecked}>Mark As Complete</div>
+            <button className="removeButton" onClick={handleRemoveButton}>x</button>
         </>
     )
 }
@@ -61,13 +36,6 @@ function TaskCard({task}){
         return;
     }
 
-    function handleRemoveButton(){
-        if(typeof task.onRemove === 'function'){
-            task.onRemove(task.id);
-            return;
-        }
-    }
-
     function handleTaskValueChange(e){
         setTaskValue(e.target.value);        
         console.log(taskValue);
@@ -78,10 +46,14 @@ function TaskCard({task}){
         setIsEditing(false);
     }
 
+    function handleArchive(){
+        task.onArchive(task.id);
+    }
+
     return(
-        <div id="taskcard" className="flex flex-col rounded-md bg-white/4 h-fit p-4 mt-5 hover:shadow-md hover:translate-y-[-5px] duration-150 ease-in" >
+        <div id="taskcard" className="flex flex-col rounded-md bg-white/4 h-fit p-4 mt-5 hover:shadow-lg hover:translate-y-[-5px] duration-150 ease-in" >
             <header id="card-header" className="flex justify-between">
-                <TaskCardHeader task={task} onCompletion={task.onCompletion} isEditing={isEditing}/>
+                <TaskCardHeader task={task} isEditing={isEditing}/>
             </header>
                 {
                     isEditing ? 
@@ -99,14 +71,13 @@ function TaskCard({task}){
 
             { isEditing ? (
                 <div id="cardButtonContainer" className="flex justify-end">
-                    <button className="removeButton" onClick={handleRemoveButton}>Remove</button>
                 </div>
             )
             :
             (
             <div id="cardButtonContainer" className="flex justify-between">
                 <button className="editButton border border-gray-500 w-fit px-4 py-1 rounded-sm hover:bg-gray-500 duration-150 ease-in" onClick={handleEditButton}>Edit</button>
-                <button className="removeButton" onClick={handleRemoveButton}>Remove</button>
+                <button id="archive-button" className="border border-gray-500 rounded-md px-2 hover:bg-[#c3cc5e] hover:text-yellow-900 duration-150 ease-in" onClick={handleArchive}>Archive</button>
             </div>
             )
             }   
@@ -114,13 +85,15 @@ function TaskCard({task}){
     );
 }
 
-function DisplayCurrentTask({tasks, onRemove, onSave, onCompletion}){
+function DisplayCurrentTask({tasks, onRemove, onSave, onCompletion, onArchive}){
     return(
         <>
         {
             tasks.length !== 0 ? (
-            tasks.map((task) =>
-                <TaskCard key={task.id} task={{...task, onRemove, onSave, onCompletion}} />
+            tasks.filter((task) =>
+                (task.completed === false && task.archived === false)
+            ).map(task => 
+                <TaskCard key={task.id} task={{...task, onRemove, onSave, onCompletion, onArchive}} />
             )
         ):
         (
@@ -152,6 +125,7 @@ function NewTaskWindow({ onCreateTask }) {
             dateCreated: new Date().getDate(),
             goalDate: taskGoalDate,
             completed: false,
+            archived : false
         });
         setTaskTitle('');
         setTaskGoalDate('');
@@ -206,38 +180,31 @@ function CompleteTaskCard({task}){
         return;
     }
     return (
-    <div id="completedTaskcard" class="flex flex-row justify-between w-5/6 h-fit my-3 px-5 border-b border-black pt-2 m-auto">
-            <h2 class="card-header font-semibold text-lg">{task.taskName}</h2>
-            <button class="removeButton h-fit" onClick={handleRemove}>Remove</button>
-    </div>
+        <div id="completedTaskcard" className="flex flex-row justify-between w-5/6 h-fit my-3 px-5 border-b border-black pt-2 m-auto">
+                <h2 className="card-header font-semibold text-lg">{task.taskName}</h2>
+                <button className="removeButton h-fit" onClick={handleRemove}>Remove</button>
+        </div>
     );
 }
-
-function CompletedTasks({completedTasks, onRemove}){
+//figure out what to display when theres no tasks completed
+//When you've completed a Task, it goes Here!
+function CompletedTasks({tasks, onRemove}){
     return(
-            completedTasks.length !== 0 ? (
-            completedTasks.map(task =>
-                <CompleteTaskCard key={task.id} task={{...task, onRemove}}></CompleteTaskCard>
-            )
-        ):
-        (
-            <h3 className="text-xl m-auto">When you've completed a Task, it goes Here!</h3>
+        tasks.filter(tasks => 
+            tasks.completed
+        ).map(task => (
+            <CompleteTaskCard key={task.id} task={{...task, onRemove}}></CompleteTaskCard>
         )
+    )
     )
 }
 
 
 
-function Home(){
-    const [tasks, setTasks] = useState(currentTasks);
-    const [completedTasks, setCompletedTasks] = useState([]);
+function Home({tasks, setTasks}){
 
     function handleRemoveTask(id){
         setTasks(prev => prev.filter(t => t.id !== id));
-    }
-
-    function handleRemoveCompletedTask(id){
-        setCompletedTasks(prev => prev.filter(t=> t.id !== id));
     }
 
     //REMEMBER THIS YOU ALWAYS MESS THIS UP 
@@ -253,11 +220,18 @@ function Home(){
         setTasks(currentTasks => [...currentTasks, newTask]);
     }
 
-    function handleCompleteTask(completedTask){
-        setCompletedTasks(completedTasks => [...completedTasks, completedTask])
-        setTasks(currentTasks => currentTasks.filter(
-            task => task.id !== completedTask.id
-        ))
+    function handleCompleteTask(id){
+        setTasks(currentTasks => currentTasks.map(task => 
+            task.id === id ? {...task, completed : true} : 
+            task
+        ));
+    }
+
+    function handleArchive(id){
+        setTasks(currentTasks => currentTasks.map(task => 
+            task.id === id ? {...task, archived : true} :
+            task
+        ));
     }
 
     return(
@@ -266,7 +240,7 @@ function Home(){
             <div id="homeContainer" className=" h-full w-full flex flex-row gap-15">
                 <section id="currentTasks" className= "w-1/2 min-h-[600px] h-fit rounded-xl">
                     <h2 className="sectionHeaderTitle h-fit">Tasks in Progress</h2>
-                    <DisplayCurrentTask tasks={tasks} onRemove={handleRemoveTask} onSave={handleEditChange} onCompletion={handleCompleteTask}/>
+                    <DisplayCurrentTask tasks={tasks} onRemove={handleRemoveTask} onSave={handleEditChange} onCompletion={handleCompleteTask} onArchive={handleArchive}/>
                 </section>
                 <div id="twoSectionsDiv" className="flex flex-col w-1/2 min-h-fit h-9/10 rounded-xl gap-5">
                     <section id="newTasks" className=" w-full h-fit">
@@ -275,7 +249,7 @@ function Home(){
                     <section className="w-full h-full rounded-xl ">
                         <h2 className="sectionHeaderTitle">Completed Tasks</h2>
                         <div className="w-full m-auto min-h-85 max-h-fit bg-white/4 rounded-xl flex flex-col items-center">
-                            <CompletedTasks completedTasks={completedTasks} onRemove={handleRemoveCompletedTask}></CompletedTasks>
+                            <CompletedTasks tasks={tasks} onRemove={handleRemoveTask}></CompletedTasks>
                         </div>
                     </section>
                 </div>

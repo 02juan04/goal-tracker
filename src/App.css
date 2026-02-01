@@ -44,15 +44,18 @@ input[type="text"]:hover{
 
 .removeButton{
     font-weight: 400;
-    border: solid gray 1px;
+    height: fit-content;
+    font-size: medium;
     padding: 0.2rem 0.7rem 0.2rem 0.7rem;
     border-radius: 10px;
     transition: background-color 150ms ease-in;
+    cursor: pointer;
 }
 
 .removeButton:hover{
-    background-color: red;
+    background-color: rgb(217, 88, 88);
 }
+
 .sectionHeaderTitle{
     width: fit-content;
     margin: 0 auto 15px auto;
