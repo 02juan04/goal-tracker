@@ -79,7 +79,7 @@ function TaskCard({task}){
     }
 
     return(
-        <div id="taskcard" className="flex flex-col rounded-md bg-white/4 h-fit p-4 mt-5 hover:shadow-lg hover:translate-y-[-5px] duration-150 ease-in" >
+        <div id="taskcard" className="flex flex-col rounded-md bg-white/4 h-fit p-4 mt-5 hover:shadow-md hover:translate-y-[-5px] duration-150 ease-in" >
             <header id="card-header" className="flex justify-between">
                 <TaskCardHeader task={task} onCompletion={task.onCompletion} isEditing={isEditing}/>
             </header>
@@ -118,9 +118,14 @@ function DisplayCurrentTask({tasks, onRemove, onSave, onCompletion}){
     return(
         <>
         {
+            tasks.length !== 0 ? (
             tasks.map((task) =>
                 <TaskCard key={task.id} task={{...task, onRemove, onSave, onCompletion}} />
             )
+        ):
+        (
+            <h3>Lets Create Some Tasks!!</h3>
+        )
         }
         </>
     );
@@ -167,6 +172,7 @@ function NewTaskWindow({ onCreateTask }) {
                     value={taskTitle}
                     onChange={handleInputChange}
                     className="w-full col-span-full"
+                    required
                 />
 
                 <div className="flex gap-4 w-full items-center col-span-full">
@@ -200,7 +206,7 @@ function CompleteTaskCard({task}){
         return;
     }
     return (
-    <div id="completedTaskcard" class="flex flex-row justify-between w-5/6 h-fit my-5 px-5 border-b border-black p-1 m-auto">
+    <div id="completedTaskcard" class="flex flex-row justify-between w-5/6 h-fit my-3 px-5 border-b border-black pt-2 m-auto">
             <h2 class="card-header font-semibold text-lg">{task.taskName}</h2>
             <button class="removeButton h-fit" onClick={handleRemove}>Remove</button>
     </div>
@@ -209,9 +215,14 @@ function CompleteTaskCard({task}){
 
 function CompletedTasks({completedTasks, onRemove}){
     return(
+            completedTasks.length !== 0 ? (
             completedTasks.map(task =>
                 <CompleteTaskCard key={task.id} task={{...task, onRemove}}></CompleteTaskCard>
             )
+        ):
+        (
+            <h3 className="text-xl m-auto">When you've completed a Task, it goes Here!</h3>
+        )
     )
 }
 
@@ -251,20 +262,20 @@ function Home(){
 
     return(
         <>
-            <h1>Lets start this day off on the right foot</h1>
+            <h1 id="main-header" className="text-[50px] my-5 tracking-widest font-thin">Task Tracker</h1>
             <div id="homeContainer" className=" h-full w-full flex flex-row gap-15">
-                <section id="currentTasks" className= "w-1/2 min-h-[600px] h-fit rounded-xl mt-15">
+                <section id="currentTasks" className= "w-1/2 min-h-[600px] h-fit rounded-xl">
                     <h2 className="sectionHeaderTitle h-fit">Tasks in Progress</h2>
                     <DisplayCurrentTask tasks={tasks} onRemove={handleRemoveTask} onSave={handleEditChange} onCompletion={handleCompleteTask}/>
                 </section>
-                <div id="twoSectionsDiv" className="flex flex-col w-1/2 min-h-fit h-9/10 mt-15 rounded-xl gap-5">
+                <div id="twoSectionsDiv" className="flex flex-col w-1/2 min-h-fit h-9/10 rounded-xl gap-5">
                     <section id="newTasks" className=" w-full h-fit">
                         <NewTaskWindow onCreateTask={createNewTask} tasks={tasks}> </NewTaskWindow>
                     </section>
                     <section className="w-full h-full rounded-xl ">
                         <h2 className="sectionHeaderTitle">Completed Tasks</h2>
-                        <div className="w-full m-auto min-h-1/2 h-fit bg-white/4 rounded-xl py-1">
-                        <CompletedTasks completedTasks={completedTasks} onRemove={handleRemoveCompletedTask}></CompletedTasks>
+                        <div className="w-full m-auto min-h-85 max-h-fit bg-white/4 rounded-xl flex flex-col items-center">
+                            <CompletedTasks completedTasks={completedTasks} onRemove={handleRemoveCompletedTask}></CompletedTasks>
                         </div>
                     </section>
                 </div>
