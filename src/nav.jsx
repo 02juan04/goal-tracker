@@ -1,17 +1,14 @@
 import './nav.css'
 import {Link} from 'react-router-dom';
 
-const navOptions = ["Home", "Task Types", "Archived"];
 
 export default function Nav(){
     return(
         <nav className='flex justify-center mb-6'>
             <ul className='flex gap-10'>
-            {navOptions.map(item => 
-            <div key={item} className='navOptionContainer'>
-                <li><Link to={item === "Home" ? "/" : item}>{item}</Link></li>
-            </div>
-            )}
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/Task-Types">Task Types</Link></li>
+                <li><Link to="/Archived">Archived</Link></li>
             </ul>
         </nav>
     );

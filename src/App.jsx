@@ -2,7 +2,7 @@ import './App.css'
 import Nav from './nav'
 import {Route, Routes} from 'react-router-dom'
 import Home from './pages/Home.jsx'
-import Profile from './pages/Profile.jsx'
+import TaskTypes from './pages/Task-Types.jsx'
 import Archived from './pages/Archived.jsx'
 import { useState } from "react";
 
@@ -52,7 +52,7 @@ function App() {
       <div className='flex w-5/6 md:w-3/4 lg:w-2/3 xl:w-250 flex-col justify-center items-center'>
         <Routes>
           <Route path='/' element={<Home tasks={tasks} setTasks={setTasks}/>}></Route>
-          <Route path='/Profile' element={<Profile/>}></Route>
+          <Route path='/Task-Types' element={<TaskTypes/>}></Route>
           <Route path='/Archived' element={<Archived tasks={tasks} setTasks={setTasks}/>}></Route>
         </Routes>
       </div>
