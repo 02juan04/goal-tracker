@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { MdOutlineArchive } from "react-icons/md";
 import '../App.css'
 
 const TaskCardHeader = ({task}) => {
@@ -17,7 +19,7 @@ const TaskCardHeader = ({task}) => {
     return(
         <>
             <div id="customCheckbox" className="w-fit h-fit px-2 py-1 rounded-sm hover:bg-[#45c484] cursor-pointer text-xs hover:text-black" onClick={handleChecked}>Mark As Complete</div>
-            <button className="removeButton" onClick={handleRemoveButton}>x</button>
+            <FaRegTrashCan onClick={handleRemoveButton} className="removeButton"/>
         </>
     )
 }
@@ -76,7 +78,7 @@ function TaskCard({task}){
             :
             (
             <div id="cardButtonContainer" className="flex justify-between">
-                <button className="editButton border border-gray-500 w-fit px-4 py-1 rounded-sm hover:bg-gray-500 duration-150 ease-in" onClick={handleEditButton}>Edit</button>
+                <button className="editButton border border-gray-500 w-fit px-3 py-1 rounded-sm hover:bg-gray-500 duration-150 ease-in" onClick={handleEditButton}>Edit</button>
                 <button id="archive-button" className="border border-gray-500 rounded-md px-2 hover:bg-[#c3cc5e] hover:text-yellow-900 duration-150 ease-in" onClick={handleArchive}>Archive</button>
             </div>
             )
@@ -179,23 +181,40 @@ function CompleteTaskCard({task}){
         task.onRemove(task.id);
         return;
     }
+
+    function handleArchive(){
+        task.onArchive(task.id);
+    }
+
     return (
+
         <div id="completedTaskcard" className="flex flex-row justify-between w-5/6 h-fit my-3 px-5 border-b border-black pt-2 m-auto">
                 <h2 className="card-header font-semibold text-lg">{task.taskName}</h2>
-                <button className="removeButton h-fit" onClick={handleRemove}>Remove</button>
+                <div id="archive-remove-buttons" className="flex flex-row gap-5">
+                    <MdOutlineArchive onClick={handleArchive} className="archive-icon"/>
+                    <FaRegTrashCan onClick={handleRemove} className="removeButton remove-icon"/>
+                </div>
         </div>
     );
 }
 //figure out what to display when theres no tasks completed
 //When you've completed a Task, it goes Here!
-function CompletedTasks({tasks, onRemove}){
-    return(
-        tasks.filter(tasks => 
-            tasks.completed
-        ).map(task => (
-            <CompleteTaskCard key={task.id} task={{...task, onRemove}}></CompleteTaskCard>
+function CompletedTasks({tasks, onRemove, onArchive}){
+        const completedTasks = tasks.filter(tasks => 
+            tasks.completed && tasks.archived === false
         )
-    )
+
+        const completedTasksCount = completedTasks.length;
+    
+    return(
+
+        completedTasksCount > 0 ?
+        completedTasks.map(task => (
+            <CompleteTaskCard key={task.id} task={{...task, onRemove, onArchive}}></CompleteTaskCard>
+            )
+        )
+        :
+        <h3 className="m-auto text-lg">When you complete a task, it goes here!</h3>
     )
 }
 
@@ -236,7 +255,7 @@ function Home({tasks, setTasks}){
 
     return(
         <>
-            <h1 id="main-header" className="text-[50px] my-5 tracking-widest font-thin">Task Tracker</h1>
+            
             <div id="homeContainer" className=" h-full w-full flex flex-row gap-15">
                 <section id="currentTasks" className= "w-1/2 min-h-[600px] h-fit rounded-xl">
                     <h2 className="sectionHeaderTitle h-fit">Tasks in Progress</h2>
@@ -249,7 +268,7 @@ function Home({tasks, setTasks}){
                     <section className="w-full h-full rounded-xl ">
                         <h2 className="sectionHeaderTitle">Completed Tasks</h2>
                         <div className="w-full m-auto min-h-85 max-h-fit bg-white/4 rounded-xl flex flex-col items-center">
-                            <CompletedTasks tasks={tasks} onRemove={handleRemoveTask}></CompletedTasks>
+                            <CompletedTasks tasks={tasks} onRemove={handleRemoveTask} onArchive={handleArchive}></CompletedTasks>
                         </div>
                     </section>
                 </div>
