@@ -1,11 +1,11 @@
 import './nav.css'
 import {Link} from 'react-router-dom';
 
-const navOptions = ["Home", "Profile", "Archived"];
+const navOptions = ["Home", "Task Types", "Archived"];
 
 export default function Nav(){
     return(
-        <nav className='flex justify-center mt-7'>
+        <nav className='flex justify-center mb-6'>
             <ul className='flex gap-10'>
             {navOptions.map(item => 
             <div key={item} className='navOptionContainer'>

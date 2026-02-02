@@ -47,6 +47,7 @@ function App() {
 
   return (
     <>
+      <h1 id="main-header" className="text-[50px] mb-4 mt-2 tracking-widest font-thin">Task Tracker</h1>
       <Nav/>
       <div className='flex w-5/6 md:w-3/4 lg:w-2/3 xl:w-250 flex-col justify-center items-center'>
         <Routes>

@@ -42,18 +42,14 @@ input[type="text"]:hover{
     background-color: rgb(44, 134, 182);
 }
 
-.removeButton{
-    font-weight: 400;
-    height: fit-content;
-    font-size: medium;
-    padding: 0.2rem 0.7rem 0.2rem 0.7rem;
-    border-radius: 10px;
-    transition: background-color 150ms ease-in;
-    cursor: pointer;
-}
 
+.removeButton{
+    cursor: pointer;
+    transition: all 200ms ease-in;
+}
 .removeButton:hover{
-    background-color: rgb(217, 88, 88);
+    color: rgb(217, 88, 88);
+    transform: scale(1.2);
 }
 
 .sectionHeaderTitle{
@@ -69,4 +65,14 @@ input[type="text"]:hover{
     content:'';
     width: 100%;
     border: 1px solid white;
+}
+
+.archive-icon{
+    cursor: pointer;
+    transition: all 200ms ease-in;
+    transform: scale(1.2);
+}
+.archive-icon:hover{
+    color: #c3cc5e;
+    transform: scale(1.5);
 }
