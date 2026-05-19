@@ -1,13 +1,13 @@
-import "./App.css";
-import Nav from "./nav";
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-import Profile from "./pages/Profile.jsx";
-import Archived from "./pages/Archived.jsx";
-import { useState, useEffect } from "react";
-import { supabase } from "./utils/supabase.js";
+import './App.css'
+import Nav from './nav'
+import {Route, Routes} from 'react-router-dom'
+import Home from './pages/Home.jsx'
+import Profile from './pages/Profile.jsx'
+import Archived from './pages/Archived.jsx'
+import { useState } from "react";
 
-/* const currentTasks = [
+
+const currentTasks = [
     {
         id: 1,
         taskName : "Take my dog out for a walk",
@@ -41,47 +41,23 @@ import { supabase } from "./utils/supabase.js";
         archived : false
     },
 ]
-    */
 
 function App() {
-  const [tasks, setTasks] = useState();
-
-  useEffect(() => {
-    async function getTasks() {
-      const { data: tasks } = await supabase.from("tasks").select();
-
-      if (tasks) {
-        setTasks(tasks);
-      }
-    }
-
-    getTasks();
-  }, []);
+    const [tasks, setTasks] = useState(currentTasks);
 
   return (
     <>
-      <h1
-        id="main-header"
-        className="text-[50px] mb-4 mt-2 tracking-widest font-thin"
-      >
-        Task Tracker
-      </h1>
-      <Nav />
-      <div className="flex w-5/6 md:w-3/4 lg:w-2/3 xl:w-250 flex-col justify-center items-center">
+      <h1 id="main-header" className="text-[50px] mb-4 mt-2 tracking-widest font-thin">Task Tracker</h1>
+      <Nav/>
+      <div className='flex w-5/6 md:w-3/4 lg:w-2/3 xl:w-250 flex-col justify-center items-center'>
         <Routes>
-          <Route
-            path="/"
-            element={<Home tasks={tasks} setTasks={setTasks} />}
-          />
-          <Route path="/Profile" element={<Profile />} />
-          <Route
-            path="/Archived"
-            element={<Archived tasks={tasks} setTasks={setTasks} />}
-          />
+          <Route path='/' element={<Home tasks={tasks} setTasks={setTasks}/>}></Route>
+          <Route path='/Profile' element={<Profile/>}></Route>
+          <Route path='/Archived' element={<Archived tasks={tasks} setTasks={setTasks}/>}></Route>
         </Routes>
       </div>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

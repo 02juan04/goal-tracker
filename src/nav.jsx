@@ -1,11 +1,7 @@
 import './nav.css'
-import {NavLink} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-const navOptions = [
-    { label: "Home", path: "/" },
-    { label: "Profile", path: "/Profile" },
-    { label: "Archived", path: "/Archived" },
-];
+const navOptions = ["Home", "Task Types", "Archived"];
 
 export default function Nav(){
     return(
@@ -13,9 +9,7 @@ export default function Nav(){
             <ul className='flex gap-10'>
             {navOptions.map(item => 
             <div key={item} className='navOptionContainer'>
-                <li>
-                    <NavLink to={item.path}>{item.label}</NavLink>
-                </li>
+                <li><Link to={item === "Home" ? "/" : item}>{item}</Link></li>
             </div>
             )}
             </ul>
