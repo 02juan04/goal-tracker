@@ -36,19 +36,19 @@ const TaskCardHeader = ({ task, onCompletion, onRemove }) => {
 
 function TaskCard({ task, onRemove, onSave, onCompletion, onArchive }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [taskValue, setTaskValue] = useState(task.task_name);
+  const [task_name, set_task_name] = useState(task.task_name);
 
   function handleEditButton() {
     setIsEditing((prev) => !prev);
   }
 
-  function handleTaskValueChange(e) {
-    setTaskValue(e.target.value);
+  function handle_task_name_change(e) {
+    set_task_name(e.target.value);
   }
 
   function handleSaveButton(e) {
     e.preventDefault();
-    onSave(task.id, taskValue);
+    onSave(task.id, task_name);
     setIsEditing(false);
   }
 
@@ -73,8 +73,8 @@ function TaskCard({ task, onRemove, onSave, onCompletion, onArchive }) {
         <form className="flex flex-col gap-3 mt-5" onSubmit={handleSaveButton}>
           <input
             type="text"
-            value={taskValue}
-            onChange={handleTaskValueChange}
+            value={task_name}
+            onChange={handle_task_name_change}
           />
 
           <button
@@ -154,13 +154,11 @@ function NewTaskWindow({ onCreateTask }) {
     e.preventDefault();
 
     onCreateTask({
-      id: crypto.randomUUID(),
       task_name: taskTitle,
-      dateCreated: new Date().getDate(),
-      goalDate: taskGoalDate,
-      completed: false,
-      archived: false,
+      goal_date: taskGoalDate,
     });
+
+    console.log(taskGoalDate);
 
     setTaskTitle("");
     setTaskGoalDate("");
@@ -256,24 +254,57 @@ function CompletedTasks({ tasks, onRemove, onArchive }) {
 /* ===================== HOME ===================== */
 
 function Home({ tasks, setTasks }) {
-  function handleRemoveTask(id) {
+  /* TODO 
+    handleRemoveTask needs to delete the row in the DB
+  */
+  async function handleRemoveTask(id) {
+    const response = await supabase.from("tasks").delete().eq("id", id);
+
+    if (response.status != 204) {
+      console.log(`response was not 200, it was: ${response.status}`);
+      console.log(response.statusText);
+      return;
+    }
+
     setTasks((prev) => prev.filter((t) => t.id !== id));
   }
 
-  function handleEditChange(id, newTask) {
-    setTasks((current) =>
-      current.map((task) =>
-        task.id === id ? { ...task, task_name: newTask } : task,
+  /* TODO
+    handleEditChange needs to UPDATE its corresponding row in the DB
+  */
+  async function handleEditChange(id, new_task_name) {
+    const { error } = await supabase
+      .from("tasks")
+      .update({ task_name: new_task_name })
+      .eq("id", id);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    setTasks((tasks) =>
+      tasks.map((task) =>
+        task.id === id ? { ...task, task_name: new_task_name } : task,
       ),
     );
   }
 
-  function createNewTask(newTask) {
-    async function insertTask(newTask) {
-      supabase.from("tasks");
+  //TODO created may18
+  //inserts new row into DB
+  //complete
+  async function createNewTask(newTask) {
+    const { data, error } = await supabase
+      .from("tasks")
+      .insert(newTask)
+      .select();
+
+    if (error) {
+      console.log(error);
+      return;
     }
 
-    setTasks((prev) => supabase.from("tasks").insert());
+    setTasks((prev) => [...prev, data[0]]);
   }
 
   function handleCompleteTask(id) {
@@ -313,6 +344,14 @@ function Home({ tasks, setTasks }) {
       </div>
 
       {/*
+
+        ==================
+        TODO
+        - fix this to work with supabase DB
+        ===================
+
+
+
         <section>
           <h2 className="sectionHeaderTitle">Completed Tasks</h2>
 
