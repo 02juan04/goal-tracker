@@ -1,7 +1,9 @@
 import "../App.css";
+import { Fragment } from "react";
 
 function ArchivedTasksTable({ tasks }) {
   const archivedTasks = tasks.filter((task) => task.archived);
+
   return (
     <>
       <table className="w-full h-fit">
@@ -15,19 +17,19 @@ function ArchivedTasksTable({ tasks }) {
         </thead>
         <tbody className="">
           {archivedTasks.map((task) => {
-            const [goalYear, goalMonth, goalDay] = task.goalDate.split("-");
-            const visualGoalDate = [goalMonth, goalDay, goalYear].join("/");
             return (
-              <>
+              <Fragment key={task.id}>
                 <tr className="border-b border-slate-400">
-                  <td className="text-center py-4">{task.taskName}</td>
-                  <td className="text-center">{visualGoalDate}</td>
+                  <td className="text-center py-4">{task.task_name}</td>
+                  <td className="text-center">{task.goal_date}</td>
                   <td className="text-center">
                     {task.completed ? "Yes" : "No"}
                   </td>
-                  <td className="text-center">{task.dateCreated.toString()}</td>
+                  <td className="text-center">
+                    {task.created_at.split("T")[0]}
+                  </td>
                 </tr>
-              </>
+              </Fragment>
             );
           })}
         </tbody>
