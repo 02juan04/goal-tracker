@@ -3,6 +3,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { MdOutlineArchive } from "react-icons/md";
 import "../App.css";
 import { supabase } from "../utils/supabase";
+import Archived from "./Archived";
 
 /* ===================== TASK CARD HEADER ===================== */
 
@@ -59,7 +60,7 @@ function TaskCard({ task, onRemove, onSave, onCompletion, onArchive }) {
   return (
     <div
       id="taskcard"
-      className="flex flex-col rounded-md bg-white/4 h-fit p-4 mt-5 hover:shadow-lg hover:translate-y-[-5px] duration-150 ease-in"
+      className="flex flex-col rounded-md bg-white/4 h-fit p-4 mt-5 hover:shadow-lg hover:scale-105 hover:bg-white/25 duration-175 ease-in"
     >
       <header id="card-header" className="flex justify-between">
         <TaskCardHeader
@@ -165,13 +166,13 @@ function NewTaskWindow({ onCreateTask }) {
   }
 
   return (
-    <div id="newTasksContainer" className="w-5/6 p-[1rem] m-auto">
+    <div id="newTasksContainer" className="w-full m-auto mb-10">
       <h2 id="newTaskHeader" className="sectionHeaderTitle">
         New Task
       </h2>
 
       <form
-        className="grid grid-rows-3 grid-cols-10 w-full gap-5 rounded-xl bg-white/4 p-5"
+        className="grid grid-rows-3 grid-cols-10 h-60 gap-5 rounded-xl bg-white/4 p-5"
         onSubmit={handleNewTask}
       >
         <input
@@ -179,17 +180,18 @@ function NewTaskWindow({ onCreateTask }) {
           placeholder="Task Title"
           value={taskTitle}
           onChange={(e) => setTaskTitle(e.target.value)}
-          className="w-full col-span-full"
+          className="w-full col-span-full text-center"
           required
         />
 
-        <div className="flex gap-4 w-full items-center col-span-full">
+        <div className="flex gap-4 w-full items-center mx-auto col-span-full text-lg">
           <label className="whitespace-nowrap">Goal Date</label>
           <input
             type="date"
             value={taskGoalDate}
             onChange={(e) => setTaskGoalDate(e.target.value)}
-            className="flex-1"
+            className="flex-1 text-right"
+            required
           />
         </div>
 
@@ -218,7 +220,7 @@ function CompleteTaskCard({ task, onRemove, onArchive }) {
   return (
     <div
       id="completedTaskcard"
-      className="flex flex-row justify-between w-5/6 h-fit my-3 px-5 border-b border-black pt-2 m-auto"
+      className="flex flex-row justify-center items-center justify-evenly  bg-white/4 rounded-xl h-20 w-full my-1 px-5 hover:shadow-lg hover:scale-105 hover:bg-white/25 duration-250"
     >
       <h2 className="card-header font-semibold text-lg">{task.task_name}</h2>
 
@@ -237,7 +239,7 @@ function CompletedTasks({ tasks, onRemove, onArchive }) {
     (task) => task.completed && !task.archived,
   );
 
-  return completedTasks.length > 0 ? (
+  return completedTasks ? (
     completedTasks.map((task) => (
       <CompleteTaskCard
         key={task.id}
@@ -256,6 +258,7 @@ function CompletedTasks({ tasks, onRemove, onArchive }) {
 function Home({ tasks, setTasks }) {
   /* TODO 
     handleRemoveTask needs to delete the row in the DB
+    comeplete
   */
   async function handleRemoveTask(id) {
     const response = await supabase.from("tasks").delete().eq("id", id);
@@ -271,6 +274,7 @@ function Home({ tasks, setTasks }) {
 
   /* TODO
     handleEditChange needs to UPDATE its corresponding row in the DB
+    complete
   */
   async function handleEditChange(id, new_task_name) {
     const { error } = await supabase
@@ -307,15 +311,37 @@ function Home({ tasks, setTasks }) {
     setTasks((prev) => [...prev, data[0]]);
   }
 
-  function handleCompleteTask(id) {
+  //TODO complete must
+  //  - update status from "in progress" to "complete"
+  //  - update setTasks state for UI
+  async function handleCompleteTask(id) {
     setTasks((current) =>
       current.map((task) =>
         task.id === id ? { ...task, completed: true } : task,
       ),
     );
+    const { error } = await supabase
+      .from("tasks")
+      .update({ completed: true, completed_date: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
   }
 
-  function handleArchive(id) {
+  async function handleArchive(id) {
+    const { error } = await supabase
+      .from("tasks")
+      .update({ archived: true })
+      .eq("id", id);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
     setTasks((current) =>
       current.map((task) =>
         task.id === id ? { ...task, archived: true } : task,
@@ -324,7 +350,7 @@ function Home({ tasks, setTasks }) {
   }
 
   return (
-    <div className="h-full w-full flex flex-row gap-15">
+    <div className="h-full w-full flex flex-row gap-15 font-extralight">
       <section className="w-1/2 min-h-[600px] h-fit rounded-xl">
         <h2 className="sectionHeaderTitle">Tasks in Progress</h2>
 
@@ -336,26 +362,16 @@ function Home({ tasks, setTasks }) {
           onArchive={handleArchive}
         />
       </section>
-
-      <div className="flex flex-col w-1/2 gap-5">
-        <section>
-          <NewTaskWindow onCreateTask={createNewTask} />
-        </section>
-      </div>
-
-      {/*
-
-        ==================
-        TODO
-        - fix this to work with supabase DB
-        ===================
-
-
+      <div className="w-1/2 flex flex-col items-center justify-center">
+        <div className="flex flex-col w-fit gap-5">
+          <section>
+            <NewTaskWindow onCreateTask={createNewTask} />
+          </section>
+        </div>
 
         <section>
           <h2 className="sectionHeaderTitle">Completed Tasks</h2>
-
-          <div className="w-full m-auto bg-white/4 rounded-xl flex flex-col items-center">
+          <div className="w-100 m-auto flex flex-col items-center">
             <CompletedTasks
               tasks={tasks}
               onRemove={handleRemoveTask}
@@ -364,7 +380,6 @@ function Home({ tasks, setTasks }) {
           </div>
         </section>
       </div>
-    */}
     </div>
   );
 }
