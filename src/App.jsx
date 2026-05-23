@@ -45,7 +45,7 @@ const currentTasks = [
 */
 
 function App() {
-  const [tasks, setTasks] = useState();
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     async function getTasks() {
@@ -67,7 +67,7 @@ function App() {
         Task Tracker
       </h1>
       <Nav />
-      <div className="flex w-5/6 md:w-3/4 lg:w-2/3 xl:w-250 flex-col justify-center items-center">
+      <div className="flex w-5/6 md:w-3/4 lg:w-2/3 3xl:border flex-col justify-center items-center">
         <Routes>
           <Route
             path="/"
