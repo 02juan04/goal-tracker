@@ -28,10 +28,10 @@ input[type="text"]:hover{
 }
 
 .createTaskButton{
-    border: solid 1px rgb(44, 134, 182);
+    border: solid 1px rgb(76, 105, 121);
     width: fit-content;
-    border-radius: 5px;
-    padding: 0.2rem 0.7rem 0.2rem 0.7rem;
+    border-radius: 20px;
+    padding-inline: 1rem;
     transition: 150ms ease-in-out;
     cursor: pointer;
 }
@@ -39,11 +39,20 @@ input[type="text"]:hover{
 .createTaskButton:hover{
     border-color: transparent;
     color: black;
-    background-color: rgb(44, 134, 182);
+    background-color: rgb(40, 119, 162);
+    border-color: black;
+    box-shadow: 5px 5px 3px rgba(28, 26, 86, 0.357);
+}
+
+.createTaskButton:active{
+    transform: translateY(2px);
+    box-shadow: 2px 2px 3px rgba(28, 26, 86, 0.357);
+
 }
 
 
 .removeButton{
+    font-size: large;
     cursor: pointer;
     transition: all 200ms ease-in;
 }
@@ -55,24 +64,18 @@ input[type="text"]:hover{
 .sectionHeaderTitle{
     width: fit-content;
     margin: 0 auto 15px auto;
-    font-size:x-large;
-    font-weight: 800;
+    font-size:xx-large;
+    font-weight: 100;
     position: relative;
-}
-.sectionHeaderTitle::after{
-    position: absolute;
-    display: block;
-    content:'';
-    width: 100%;
-    border: 1px solid white;
+    letter-spacing: 1px;
 }
 
 .archive-icon{
+    font-size: 20px;
     cursor: pointer;
     transition: all 200ms ease-in;
-    transform: scale(1.2);
 }
 .archive-icon:hover{
     color: #c3cc5e;
-    transform: scale(1.5);
+    transform: scale(1.3);
 }
