@@ -5,7 +5,7 @@ import Home from "./pages/Home.jsx";
 import Profile from "./pages/Profile.jsx";
 import Archived from "./pages/Archived.jsx";
 import { useEffect, useState } from "react";
-import { supabase } from "./utils/supabase.ts";
+import { supabase } from "./utils/supabase";
 
 /*
 const currentTasks = [
