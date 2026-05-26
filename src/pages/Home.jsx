@@ -69,7 +69,6 @@ function TaskCard({ task, onRemove, onSave, onCompletion, onArchive }) {
           onRemove={onRemove}
         />
       </header>
-
       {isEditing ? (
         <form className="flex flex-col gap-3 mt-5" onSubmit={handleSaveButton}>
           <input
@@ -147,7 +146,7 @@ function DisplayCurrentTask({
 
 /* ===================== NEW TASK ===================== */
 
-function NewTaskWindow({ onCreateTask }) {
+function NewTaskWindow({ onCreateTask, user }) {
   const [taskTitle, setTaskTitle] = useState("");
   const [taskGoalDate, setTaskGoalDate] = useState("");
 
@@ -157,6 +156,7 @@ function NewTaskWindow({ onCreateTask }) {
     onCreateTask({
       task_name: taskTitle,
       goal_date: taskGoalDate,
+      user_id: user.id,
     });
 
     console.log(taskGoalDate);
@@ -239,7 +239,7 @@ function CompletedTasks({ tasks, onRemove, onArchive }) {
     (task) => task.completed && !task.archived,
   );
 
-  return completedTasks ? (
+  return completedTasks.length ? (
     completedTasks.map((task) => (
       <CompleteTaskCard
         key={task.id}
@@ -255,21 +255,22 @@ function CompletedTasks({ tasks, onRemove, onArchive }) {
 
 /* ===================== HOME ===================== */
 
-function Home({ tasks, setTasks }) {
+function Home({ tasks, setTasks, user }) {
   /* TODO 
     handleRemoveTask needs to delete the row in the DB
     comeplete
   */
   async function handleRemoveTask(id) {
+    const currentTasks = tasks;
     const response = await supabase.from("tasks").delete().eq("id", id);
+    setTasks((prev) => prev.filter((t) => t.id !== id));
 
     if (response.status != 204) {
       console.log(`response was not 200, it was: ${response.status}`);
-      console.log(response.statusText);
+      alert(response.statusText);
+      setTasks(currentTasks);
       return;
     }
-
-    setTasks((prev) => prev.filter((t) => t.id !== id));
   }
 
   /* TODO
@@ -365,10 +366,9 @@ function Home({ tasks, setTasks }) {
       <div className="w-1/2 flex flex-col items-center justify-center">
         <div className="flex flex-col w-fit gap-5">
           <section>
-            <NewTaskWindow onCreateTask={createNewTask} />
+            <NewTaskWindow onCreateTask={createNewTask} user={user} />
           </section>
         </div>
-
         <section>
           <h2 className="sectionHeaderTitle">Completed Tasks</h2>
           <div className="w-100 m-auto flex flex-col items-center">
